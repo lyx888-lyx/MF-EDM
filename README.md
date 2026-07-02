@@ -34,13 +34,13 @@ pip install -r requirements.txt
 
 ## 📁 Datasets
 The pre-extracted multimodal features (text, audio, visual) used in this project are adopted from the [M3Net](https://github.com/feiyuchen7/M3NET) project(Chen et al., CVPR 2023), [GraphSmile](https://github.com/lijfrank/GraphSmile) project(Li, Wang, and Zeng, 2025) and . Download multimodal features:
-- [IEMOCAP](https://drive.google.com/drive/folders/1s5S1Ku679nlVZQPEfq-6LXgoN1K6Tzmz?usp=drive_link) → Place into the `IEMOCAP_features/` folder  
-- [MELD](https://drive.google.com/drive/folders/1GfqY7WNVeCBWoFa_NSTalnaIgyyOVJuC?usp=drive_link) → Place into the `MELD_features/` folder
+- IEMOCAP → Place into the `IEMOCAP_features/` folder  
+- MELD → Place into the `MELD_features/` folder
 - K-MIND → Place into the `KMIND_features/` foler
 - M3ED → Place into the `M3ED_features/` foler
 
 
-Download raw datasets(Optional):
+Download raw datasets:
 - [IEMOCAP](https://sail.usc.edu/iemocap/)
 - [MELD](https://github.com/SenticNet/MELD)
 - [M3ED](https://github.com/AIM3-RUC/RUCM3ED)

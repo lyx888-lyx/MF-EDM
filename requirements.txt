@@ -1,0 +1,10 @@
+torch==2.4.1
+torch-geometric==2.6.1
+nvidia-nvjitlink-cu12==12.1.105
+numpy
+pandas
+scikit-learn
+fvcore
+thop
+torchinfo
+transformers

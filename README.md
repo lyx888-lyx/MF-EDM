@@ -1,4 +1,7 @@
 # MF-EDM: Graph-based Multimodal Fusion and Emotional Dynamics Modeling for Emotion Recognition in Conversation
+<p align="center"><b>🎙️ Interspeech 2026</b></p>
+
+---
 
 <p align="center">
   <b>Sooyeon Hwang</b><sup>1</sup> &nbsp;&middot;&nbsp;
@@ -9,7 +12,6 @@
 <p align="center">
   <sup>1</sup>Interdisciplinary Program in Artificial Intelligence, Seoul National University<br/>
   <sup>2</sup>Department of Intelligence and Information, Seoul National University<br/>
-  <b>Cognitive Computing Lab, Seoul National University</b><br/>
   ✉️ {sooyeoni, eskwon, ggweon}@snu.ac.kr &nbsp;&nbsp;|&nbsp;&nbsp; ** Corresponding author
 </p>
 

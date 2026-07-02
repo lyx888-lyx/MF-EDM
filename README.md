@@ -16,7 +16,9 @@
 ---
 
 ## Overview
-<img width="767" height="355" alt="image" src="https://github.com/user-attachments/assets/147c4599-2e90-4559-93d4-26a93e4c479b" />
+<p align="center">
+  <img width="767" height="355" alt="MF-EDM Overview" src="https://github.com/user-attachments/assets/147c4599-2e90-4559-93d4-26a93e4c479b" />
+</p>
 
 
 ## ⚙️ Installation

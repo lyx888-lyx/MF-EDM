@@ -80,13 +80,19 @@ Reproduce with the scripts in `scripts/` (one per dataset). Single run with fixe
 
 All baselines are reimplemented under the same experimental setting.
 
-| Models              | IEMOCAP w-F1 | IEMOCAP Acc | MELD w-F1 | MELD Acc | K-MIND w-F1 | K-MIND Acc | M3ED w-F1 | M3ED Acc |
-|---------------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| MMGCN               | 65.35 | 65.00 | 59.57 | 60.46 | 72.39 | 77.12 | 46.85 | 50.15 |
-| MM-DFN              | 68.27 | 69.07 | 58.69 | 61.57 | 70.21 | 76.19 | 50.90 | 52.46 |
-| M3Net               | 69.41 | 69.44 | 65.54 | 66.51 | 73.98 | 76.79 | 50.43 | 52.92 |
-| GraphSmile          | 71.36 | 71.60 | 66.61 | 67.59 | 73.62 | 76.37 | 52.37 | 54.51 |
-| **MF-EDM (Ours)**   | **74.24** | **74.49** | **67.40** | **68.77** | **74.48** | **77.24** | **55.05** | **56.15** |
+h>w-F1</th><th>Acc</th>
+<th>w-F1</th><th>Acc</th>
+<th>w-F1</th><th>Acc</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>MMGCN</td><td>65.35</td><td>65.00</td><td>59.57</td><td>60.46</td><td>72.39</td><td>77.12</td><td>46.85</td><td>50.15</td></tr>
+<tr><td>MM-DFN</td><td>68.27</td><td>69.07</td><td>58.69</td><td>61.57</td><td>70.21</td><td>76.19</td><td>50.90</td><td>52.46</td></tr>
+<tr><td>M3Net</td><td>69.41</td><td>69.44</td><td>65.54</td><td>66.51</td><td>73.98</td><td>76.79</td><td>50.43</td><td>52.92</td></tr>
+<tr><td>GraphSmile</td><td>71.36</td><td>71.60</td><td>66.61</td><td>67.59</td><td>73.62</td><td>76.37</td><td>52.37</td><td>54.51</td></tr>
+<tr><td><b>MF-EDM (Ours)</b></td><td><b>74.24</b></td><td><b>74.49</b></td><td><b>67.40</b></td><td><b>68.77</b></td><td><b>74.48</b></td><td><b>77.24</b></td><td><b>55.05</b></td><td><b>56.15</b></td></tr>
+</tbody>
+</table>
 
 ## 🔧 Argument Highlights
 

@@ -120,7 +120,3 @@ All baselines are reimplemented under the same experimental setting.
   year      = {2026}
 }
 ```
-
-## 🙏 Acknowledgments
-
-This work was supported by the Institute for Information & Communications Technology Promotion (IITP) grant funded by the Korea government (MSIT) (No. 2022-0-00608, RS-2022-II220608) and an IITP grant funded by the MSIT (No. RS-2021-II211343, Artificial Intelligence Graduate School Program, Seoul National University).

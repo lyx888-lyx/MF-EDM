@@ -8,7 +8,7 @@ conda env create -f environment.yml
 conda activate mf_edm
 
 # Option B — pip
-conda create -n mf-edm python=3.8.20 -y && conda activate mf-edm
+conda create -n mf_edm python=3.8.20 -y && conda activate mf_edm
 pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cu121
 pip install torch-geometric==2.6.1
 pip install -r requirements.txt

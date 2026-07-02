@@ -5,7 +5,7 @@
 ```bash
 # Option A — conda (recommended; exact environment)
 conda env create -f environment.yml
-conda activate m3net
+conda activate mf-edm
 
 # Option B — pip
 conda create -n mf-edm python=3.8.20 -y && conda activate mf-edm

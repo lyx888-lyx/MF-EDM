@@ -53,28 +53,15 @@ Raw dataset sources:
 > **K-MIND / M3ED**: place the feature pickle as `KMIND_features/KMIND_features_normalized.pkl` and `M3ED_features/M3ED_features.pkl` respectively. M3ED features follow the [RUCM3ED](https://github.com/AIM3-RUC/RUCM3ED) release; K-MIND is available upon request.
 
 ## 🏋️ Training
+Each dataset has a ready-to-run script under `scripts/` with the paper's hyperparameters (Table 2) already set. Single run with fixed seed 67137.
 
-### Train on IEMOCAP
 ```bash
-python -u train.py --base-model 'GRU' --dropout 0.5 --lr 0.0001 --batch-size=32 --epochs=60 --multi_modal --mm_fusion_mthd='concat_DHT' --modals='avl' --Dataset='IEMOCAP' --norm BN --num_L=6 --num_K=3 --window_spk=10 --window_spk_f=-1 --window_dir=1 --window_dir_f=-1 --epsilon2=1 --epsilon=1 --use_speaker='bh' --multimodal_node='both' --graph_type='both' --directed_edge='avl' --single_edge=''
+bash scripts/train_iemocap.sh
+bash scripts/train_meld.sh
+bash scripts/train_kmind.sh
+bash scripts/train_m3ed.sh
 ```
 
-### Train on MELD
-```bash
-python -u train.py --base-model 'GRU' --dropout=0.4 --lr=0.0001 --batch-size 32 --epochs=6 --multi_modal --mm_fusion_mthd='concat_DHT' --modals='avl' --Dataset='MELD' --norm BN --num_L=1 --num_K=1 --window_spk=3 --window_spk_f=1 --window_dir=8 --window_dir_f=6 --epsilon2=0.1 --epsilon=1.1 --use_speaker='i' --multimodal_node='both' --graph_type='both' --directed_edge='avl' --single_edge=''
-```
-
-### Train on K-MIND
-```bash
-python -u train.py --base-model GRU --dropout 0.4 --lr 0.0001 --batch-size 32 --epochs 60 --multi_modal --mm_fusion_mthd concat_DHT --modals avl --Dataset KMIND --norm BN --num_L 2 --num_K 2 --window_spk 1 --window_spk_f 1 --window_dir 1 --window_dir_f 6 --epsilon2 0.1 --epsilon 0.9 --use_speaker i --multimodal_node both --graph_type both --directed_edge avl --single_edge ''
-```
-
-### Train on M3ED
-```bash
-python -u train.py --base-model GRU --dropout 0.4 --lr 0.001 --batch-size 32 --epochs 60 --multi_modal --mm_fusion_mthd concat_DHT --modals avl --Dataset M3ED --norm BN --num_L 2 --num_K 1 --window_spk 3 --window_spk_f 1 --window_dir 4 --window_dir_f 6 --epsilon2 0.1 --epsilon 0.7 --use_speaker i --multimodal_node both --graph_type both --directed_edge avl --single_edge ''
-```
-
-Reproduce with the scripts in `scripts/` (one per dataset). Single run with fixed seed 67137.
 
 ## 📊 Main Results
 

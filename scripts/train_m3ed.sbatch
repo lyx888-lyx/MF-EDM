@@ -8,7 +8,7 @@
 #SBATCH --mem=64G
 #SBATCH --ntasks-per-node=1
 
-source /opt/anaconda3/bin/activate m3net_default
+source /opt/anaconda3/bin/activate mf_edm
 cd "$SLURM_SUBMIT_DIR"
 export PYTHONNOUSERSITE=1
 

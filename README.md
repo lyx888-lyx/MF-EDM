@@ -80,7 +80,6 @@ Reproduce with the scripts in `scripts/` (one per dataset). Single run with fixe
 
 All baselines are reimplemented under the same experimental setting.
 
-h>w-F1</th><th>Acc</th>
 <th>w-F1</th><th>Acc</th>
 <th>w-F1</th><th>Acc</th>
 </tr>

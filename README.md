@@ -1,4 +1,23 @@
-# Fusing Modalities and Emotional Dynamics: A Two-Stage Graph-based Framework for Emotion Recognition in Conversation
+# MF-EDM: Graph-based Multimodal Fusion and Emotional Dynamics Modeling for Emotion Recognition in Conversation
+
+<p align="center">
+  <b>Sooyeon Hwang</b><sup>1</sup> &nbsp;&middot;&nbsp;
+  <b>Eunseong Kwon</b><sup>2</sup> &nbsp;&middot;&nbsp;
+  <b>Gahgene Gweon</b><sup>1,2,**</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup>Interdisciplinary Program in Artificial Intelligence, Seoul National University<br/>
+  <sup>2</sup>Department of Intelligence and Information, Seoul National University<br/>
+  <b>Cognitive Computing Lab, Seoul National University</b><br/>
+  ✉️ {sooyeoni, eskwon, ggweon}@snu.ac.kr &nbsp;&nbsp;|&nbsp;&nbsp; ** Corresponding author
+</p>
+
+---
+
+## Overview
+<img width="767" height="355" alt="image" src="https://github.com/user-attachments/assets/147c4599-2e90-4559-93d4-26a93e4c479b" />
+
 
 ## ⚙️ Installation
 
@@ -14,41 +33,24 @@ pip install torch-geometric==2.6.1
 pip install -r requirements.txt
 ```
 
-## 🛠️ Requirements
-
-- Python 3.8.20
-- PyTorch 2.4.1
-- CUDA 12.1
-- torch-geometric 2.6.1
-- fvcore, thop, torchinfo
-
-## 🩹 Troubleshooting
-
-- **`ImportError: libnvJitLink.so.12`**: your `torch`/CUDA install is missing `nvidia-nvjitlink-cu12`. Fix with `pip install nvidia-nvjitlink-cu12==12.1.105` (already pinned in `requirements.txt`/`environment.yml`).
-- **`ModuleNotFoundError` for packages you're sure are installed, or `KeyError: 'Version'` from `importlib_metadata`**: on shared machines, a user-level `~/.local/lib/pythonX.Y/site-packages` can shadow or conflict with your conda env's packages. Isolate the env by running with `PYTHONNOUSERSITE=1`, e.g.:
-  ```bash
-  PYTHONNOUSERSITE=1 python -u train.py ...
-  ```
-  The scripts in `scripts/` already set this.
-- **`transformers`/`huggingface_hub` import errors when importing `torch_geometric`**: `torch_geometric.nn` eagerly imports its optional LLM utilities (`torch_geometric.nn.nlp.llm`), which pull in `transformers`. This is installed via `requirements.txt`/`environment.yml`; if you install `torch-geometric` separately (Option B), make sure `transformers` is present too.
+**Requirements:** Python 3.8.20 · PyTorch 2.4.1 · CUDA 12.1 · torch-geometric 2.6.1 · fvcore, thop, torchinfo
 
 ## 📁 Datasets
-The pre-extracted multimodal features (text, audio, visual) used in this project are adopted from the [M3Net](https://github.com/feiyuchen7/M3NET) project(Chen et al., CVPR 2023), [GraphSmile](https://github.com/lijfrank/GraphSmile) project(Li, Wang, and Zeng, 2025) and . Download multimodal features:
-- IEMOCAP → Place into the `IEMOCAP_features/` folder  
-- MELD → Place into the `MELD_features/` folder
-- K-MIND → Place into the `KMIND_features/` foler
-- M3ED → Place into the `M3ED_features/` foler
 
+The pre-extracted multimodal features (text, audio, visual) used in this project are adopted from the [M3Net](https://github.com/feiyuchen7/M3NET) project (Chen et al., CVPR 2023) and the [GraphSmile](https://github.com/lijfrank/GraphSmile) project (Li, Wang, and Zeng, 2025). Download the pre-extracted multimodal features:
+- IEMOCAP → place into the `IEMOCAP_features/` folder
+- MELD → place into the `MELD_features/` folder
+- K-MIND → place into the `KMIND_features/` folder
+- M3ED → place into the `M3ED_features/` folder
 
-Download raw datasets:
+Raw dataset sources:
 - [IEMOCAP](https://sail.usc.edu/iemocap/)
 - [MELD](https://github.com/SenticNet/MELD)
 - [M3ED](https://github.com/AIM3-RUC/RUCM3ED)
 
-
 > **K-MIND / M3ED**: place the feature pickle as `KMIND_features/KMIND_features_normalized.pkl` and `M3ED_features/M3ED_features.pkl` respectively. M3ED features follow the [RUCM3ED](https://github.com/AIM3-RUC/RUCM3ED) release; K-MIND is available upon request.
 
-## 🏋️‍♀️ Training
+## 🏋️ Training
 
 ### Train on IEMOCAP
 ```bash
@@ -60,7 +62,7 @@ python -u train.py --base-model 'GRU' --dropout 0.5 --lr 0.0001 --batch-size=32 
 python -u train.py --base-model 'GRU' --dropout=0.4 --lr=0.0001 --batch-size 32 --epochs=6 --multi_modal --mm_fusion_mthd='concat_DHT' --modals='avl' --Dataset='MELD' --norm BN --num_L=1 --num_K=1 --window_spk=3 --window_spk_f=1 --window_dir=8 --window_dir_f=6 --epsilon2=0.1 --epsilon=1.1 --use_speaker='i' --multimodal_node='both' --graph_type='both' --directed_edge='avl' --single_edge=''
 ```
 
-### Train on KMIND
+### Train on K-MIND
 ```bash
 python -u train.py --base-model GRU --dropout 0.4 --lr 0.0001 --batch-size 32 --epochs 60 --multi_modal --mm_fusion_mthd concat_DHT --modals avl --Dataset KMIND --norm BN --num_L 2 --num_K 2 --window_spk 1 --window_spk_f 1 --window_dir 1 --window_dir_f 6 --epsilon2 0.1 --epsilon 0.9 --use_speaker i --multimodal_node both --graph_type both --directed_edge avl --single_edge ''
 ```
@@ -70,82 +72,53 @@ python -u train.py --base-model GRU --dropout 0.4 --lr 0.0001 --batch-size 32 --
 python -u train.py --base-model GRU --dropout 0.4 --lr 0.001 --batch-size 32 --epochs 60 --multi_modal --mm_fusion_mthd concat_DHT --modals avl --Dataset M3ED --norm BN --num_L 2 --num_K 1 --window_spk 3 --window_spk_f 1 --window_dir 4 --window_dir_f 6 --epsilon2 0.1 --epsilon 0.7 --use_speaker i --multimodal_node both --graph_type both --directed_edge avl --single_edge ''
 ```
 
-
-## 📉 Experiments
-### Ablation Study
-Each line shows the arguments changed to disable a specific model component or modality.
-```bash
-# Table 3 (i) w/o multimodal node (h^m)
---multimodal_node=''
-# Table 3 (ii) w/o EIGNN (I^m)
---graph_type='ECG'
-# Table 3 (iii) w/o ECGNN (C^m)
---graph_type='EIG'
-# Table 4 Modality Configuration
-Remove --multi_modal
---modals='l' --directed_edge='l' or --modals='a' --directed_edge='a' or --modals='v' --directed_edge='v'
-Do not remove --multi_modal
---modals='la' --directed_edge='la' or --modals='lv' --directed_edge='lv' or --modals='av' --directed_edge='av'
-# Appendix Table 5 Effect of Speaker Embedding
---use_speaker=''
-# Appendix Table 6 Effect of Intra-Utterance Multi-Edges
---single_edge='intra'
-# Appendix Table 7 Effect of Intra-Utterance Directed Edges
---directed_edge='' or --directed_edge='l' or --directed_edge='a' or --directed_edge='v' or --directed_edge='la' or --directed_edge='lv' or --directed_edge='av'
-```
-
-### Effect of Hyperparameter
-We also evaluate the model’s sensitivity to key hyperparameters:
-```bash
-# Figure 3: Number of GNN Layers
---num_L=<int>
---num_K=<int>
-# Appendix Figure 3: Impact of Residual Scaling εI and εC
-# For EIGNN
---epsilon2=<float>
-# For ECGNN
---epsilon=<float>
-# Appendix Figure 4: Effect of Window Size
-# For EIGNN
---window_spk=<int>
---window_spk_f=<int>
-# For ECGNN
---window_dir=<int>
---window_dir_f=<int>
-```
-
-## 🔧 Argument Highlights
-
-| Argument              | Description                                                                 |
-|-----------------------|-----------------------------------------------------------------------------|
-| `--modals`            | Modalities to use for fusion: `'a'` (audio), `'v'` (visual), `'l'` (language). Use combinations like `'avl'`. |
-| `--multi_modal`       | Enable multimodal input using text, audio, and visual features.             |
-| `--num_L`             | Number of EIGNN layers.                           |
-| `--num_K`             | Number of ECGNN layers.                       |
-| `--window_spk`        | Past window size for EIGNN.                           |
-| `--window_spk_f`      | Future window size for EIGNN.                         |
-| `--window_dir`        | Past window size for ECGNN.                           |
-| `--window_dir_f`      | Future window size for ECGNN.                         |
-| `--epsilon`           | Scaling factor for ECGNN.                           |
-| `--epsilon2`          | Scaling factor for EIGNN.                         |
-| `--use_speaker`       | Type of speaker embedding in the graph.                         |
-| `--multimodal_node`   | Multimodal node in the model: `'EIG'`, `'ECG'`, or `'both'`. |
-| `--graph_type`        | Type of graph in the model: `'EIG'`, `'ECG'`, or `'both'`. |
-| `--directed_edge`     | Applies directed intra-utterance edges to the multimodal node for selected modalities: `'a'`, `'v'`, `'l'`. |
-| `--single_edge`       | Use only a single edge type: `'intra'` (intra-utterance). |
-| `--testing`           | Run in test mode using a pre-trained model checkpoint.                      |
-| `--overhead`          | Run FLOP/memory/time analysis (only valid when `--testing` is used).        |
----
+Reproduce with the scripts in `scripts/` (one per dataset). Single run with fixed seed 67137.
 
 ## 📊 Main Results
 
-Single run with fixed seed 67137 (reproducible via `scripts/`).
+All baselines are reimplemented under the same experimental setting.
 
-| Dataset | weighted-F1 | Accuracy |
-|---------|:-----------:|:--------:|
-| IEMOCAP | 74.13 | 74.37 |
-| MELD    | 67.40 | 68.77 |
-| K-MIND  | 74.49 | 77.27 |
-| M3ED    | 54.03 | 55.11 |
+| Models              | IEMOCAP w-F1 | IEMOCAP Acc | MELD w-F1 | MELD Acc | K-MIND w-F1 | K-MIND Acc | M3ED w-F1 | M3ED Acc |
+|---------------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| MMGCN               | 65.35 | 65.00 | 59.57 | 60.46 | 72.39 | 77.12 | 46.85 | 50.15 |
+| MM-DFN              | 68.27 | 69.07 | 58.69 | 61.57 | 70.21 | 76.19 | 50.90 | 52.46 |
+| M3Net               | 69.41 | 69.44 | 65.54 | 66.51 | 73.98 | 76.79 | 50.43 | 52.92 |
+| GraphSmile          | 71.36 | 71.60 | 66.61 | 67.59 | 73.62 | 76.37 | 52.37 | 54.51 |
+| **MF-EDM (Ours)**   | **74.24** | **74.49** | **67.40** | **68.77** | **74.48** | **77.24** | **55.05** | **56.15** |
 
-Reproduce with the scripts in `scripts/` (one per dataset).
+## 🔧 Argument Highlights
+
+| Argument            | Description                                                                                                   | Paper notation |
+|---------------------|-----------------------------------------------------------------------------------------------------------------|-----------------|
+| `--modals`          | Modalities to use for fusion: `'a'` (audio), `'v'` (visual), `'l'` (language). Use combinations like `'avl'`.   | {t, a, v} |
+| `--multi_modal`     | Enable multimodal input using text, audio, and visual features.                                                 | — |
+| `--num_L`           | Number of EIGNN layers.                                                                                          | L<sup>I</sup> |
+| `--num_K`           | Number of ECGNN layers.                                                                                         | L<sup>C</sup> |
+| `--window_spk`      | Past window size for EIGNN.                                                                                      | P<sup>I</sup> |
+| `--window_spk_f`    | Future window size for EIGNN.                                                                                   | F<sup>I</sup> |
+| `--window_dir`      | Past window size for ECGNN.                                                                                      | P<sup>C</sup> |
+| `--window_dir_f`    | Future window size for ECGNN.                                                                                   | F<sup>C</sup> |
+| `--epsilon`         | Residual scaling factor for ECGNN.                                                                               | ε<sub>C</sub> |
+| `--epsilon2`        | Residual scaling factor for EIGNN.                                                                               | ε<sub>I</sub> |
+| `--use_speaker`     | Type of speaker embedding in the graph.                                                                          | speaker embedding |
+| `--multimodal_node` | Multimodal anchor node used in the model: `'EIG'`, `'ECG'`, or `'both'`.                                        | h<sup>m</sup> |
+| `--graph_type`      | Which Stage-2 GNN(s) feed the classifier: `'EIG'`, `'ECG'`, or `'both'`.                                        | EIGNN / ECGNN |
+| `--directed_edge`   | Applies directed intra-utterance edges into the multimodal anchor node for selected modalities: `'a'`, `'v'`, `'l'`. | {h<sup>x</sup> → h<sup>m</sup>} |
+| `--single_edge`     | Restrict to a single edge type: `'intra'` (intra-utterance only).                                               | Ek edge types |
+| `--testing`         | Run in test mode using a pre-trained model checkpoint.                                                          | — |
+| `--overhead`        | Run FLOP / memory / time analysis (only valid with `--testing`).                                                | — |
+
+## 📚 Citation
+
+```bibtex
+@inproceedings{hwang2026mfedm,
+  title     = {{MF-EDM}: Graph-based Multimodal Fusion and Emotional Dynamics Modeling for Emotion Recognition in Conversation},
+  author    = {Hwang, Sooyeon and Kwon, Eunseong and Gweon, Gahgene},
+  booktitle = {Interspeech},
+  year      = {2026}
+}
+```
+
+## 🙏 Acknowledgments
+
+This work was supported by the Institute for Information & Communications Technology Promotion (IITP) grant funded by the Korea government (MSIT) (No. 2022-0-00608, RS-2022-II220608) and an IITP grant funded by the MSIT (No. RS-2021-II211343, Artificial Intelligence Graduate School Program, Seoul National University).

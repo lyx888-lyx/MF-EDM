@@ -1,4 +1,4 @@
-name: m3net
+name: mf_edm
 channels:
   - pytorch
   - anaconda

@@ -633,84 +633,53 @@ if __name__ == '__main__':
         save_dir = "saved_features"  
         os.makedirs(save_dir, exist_ok=True)  
 
-        if args.Dataset == 'MELD':
-            with open(os.path.join(save_dir, "multimodal_emotions_before_MELD.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_before_train, f)
-            with open(os.path.join(save_dir, "multimodal_emotions_after_MELD.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_after_train, f)
-            with open(os.path.join(save_dir, "emotion_labels_MELD.pkl"), "wb") as f:
-                pickle.dump(test_label, f)
-            with open(os.path.join(save_dir, "speaker_index_MELD.pkl"), "wb") as f:
-                pickle.dump(spk_idx, f)
-        elif args.Dataset == 'IEMOCAP_4':
-            with open(os.path.join(save_dir, "multimodal_emotions_before_IEMOCAP_4.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_before_train, f)
-            with open(os.path.join(save_dir, "multimodal_emotions_after_IEMOCAP_4.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_after_train, f)
-            with open(os.path.join(save_dir, "emotion_labels_IEMOCAP_4.pkl"), "wb") as f:
-                pickle.dump(test_label, f)
-            with open(os.path.join(save_dir, "speaker_index_IEMOCAP_4.pkl"), "wb") as f:
-                pickle.dump(spk_idx, f)
-        elif args.Dataset == 'MOSEI':
-            with open(os.path.join(save_dir, "multimodal_emotions_before_MOSEI.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_before_train, f)
-            with open(os.path.join(save_dir, "multimodal_emotions_after_MOSEI.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_after_train, f)
-            with open(os.path.join(save_dir, "emotion_labels_MOSEI.pkl"), "wb") as f:
-                pickle.dump(test_label, f)
-            with open(os.path.join(save_dir, "speaker_index_MOSEI.pkl"), "wb") as f:
-                pickle.dump(spk_idx, f)
-        elif args.Dataset == 'KMIND':
-            with open(os.path.join(save_dir, "multimodal_emotions_before_KMIND.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_before_train, f)
-            with open(os.path.join(save_dir, "multimodal_emotions_after_KMIND.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_after_train, f)
-            with open(os.path.join(save_dir, "emotion_labels_KMIND.pkl"), "wb") as f:
-                pickle.dump(test_label, f)
-            with open(os.path.join(save_dir, "speaker_index_KMIND.pkl"), "wb") as f:
-                pickle.dump(spk_idx, f)
-        else:
-            with open(os.path.join(save_dir, "multimodal_emotions_before_IEMOCAP.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_before_train, f)
-            with open(os.path.join(save_dir, "multimodal_emotions_after_IEMOCAP.pkl"), "wb") as f:
-                pickle.dump(multimodal_emotions_after_train, f)
-            with open(os.path.join(save_dir, "emotion_labels_IEMOCAP.pkl"), "wb") as f:
-                pickle.dump(test_label, f)
-            with open(os.path.join(save_dir, "speaker_index_IEMOCAP.pkl"), "wb") as f:
-                pickle.dump(spk_idx, f)
-        
-        qmask_all = []
-        utt_lengths = []
-        for data in test_loader:
-            if args.Dataset == "MOSEI":
-                textf1, textf2, textf3, textf4, visuf, acouf, qmask, umask, label, _ = [d.cuda() for d in data[:-1]] if cuda else data[:-1]
-            else:
-                textf, visuf, acouf, qmask, umask, label = [d.cuda() for d in data[:-1]] if cuda else data[:-1]
-            lengths = []
-            if args.Dataset == "MOSEI":
-                for j in range(umask.shape[1]):
-                    valid = (umask[:, j] == 1).nonzero(as_tuple=False)
-                    lengths.append(valid[-1][0].item() + 1 if len(valid) > 0 else 1)
-            else:
-                lengths = [(umask[j] == 1).nonzero(as_tuple=False).tolist()[-1][0] + 1 for j in range(len(umask))]
-            qmask_all.extend(torch.cat([qmask[:x,i,:] for i,x in enumerate(lengths)],dim=0))
-            utt_lengths.extend(lengths)
+        # Export under the correct dataset name (including M3ED).
+        feature_exports = {
+            "multimodal_emotions_before": multimodal_emotions_before_train,
+            "multimodal_emotions_after": multimodal_emotions_after_train,
+            "emotion_labels": test_label,
+            "speaker_index": spk_idx,
+        }
+        for basename, values in feature_exports.items():
+            path = os.path.join(save_dir, "{}_{}.pkl".format(basename, args.Dataset))
+            with open(path, "wb") as f:
+                pickle.dump(values, f)
 
+        # The original exporter unpacked KMIND-shaped batches for every
+        # dataset and iterated over flattened qmask rows as if they were
+        # dialogues. Read masks by their actual positions and preserve the
+        # prediction/label order produced by train_or_eval_graph_model.
         utterance_info = []
         flat_idx = 0
-        for d_id, (qmask_d, length) in enumerate(zip(qmask_all, utt_lengths)):
-            for u_idx in range(length):                
-                speaker = int(torch.argmax(qmask_all[flat_idx]))
-                label = int(test_label[flat_idx])
-                pred = int(test_pred[flat_idx])
-                utterance_info.append({
-                    "dialogue_id": d_id,
-                    "utterance_idx": u_idx,
-                    "speaker": speaker,
-                    "label": label,
-                    "pred": pred
-                })
-                flat_idx += 1
+        dialogue_id = 0
+        for data in test_loader:
+            if args.Dataset == "KMIND":
+                qmask, umask = data[3], data[4]
+            else:
+                qmask, umask = data[6], data[7]
+            mask_by_dialogue = umask.transpose(0, 1) if args.Dataset == "MOSEI" else umask
+            for batch_idx in range(mask_by_dialogue.size(0)):
+                time_indices = torch.nonzero(
+                    mask_by_dialogue[batch_idx] == 1, as_tuple=False
+                ).flatten().tolist()
+                for utterance_idx, time_idx in enumerate(time_indices):
+                    if flat_idx >= len(test_label):
+                        raise ValueError("More utterances than predictions in test export")
+                    utterance_info.append({
+                        "dialogue_id": dialogue_id,
+                        "utterance_idx": utterance_idx,
+                        "speaker": int(torch.argmax(qmask[time_idx, batch_idx]).item()),
+                        "label": int(test_label[flat_idx]),
+                        "pred": int(test_pred[flat_idx]),
+                    })
+                    flat_idx += 1
+                dialogue_id += 1
+        if flat_idx != len(test_label):
+            raise ValueError(
+                "Test export utterance count {} differs from predictions {}".format(
+                    flat_idx, len(test_label)
+                )
+            )
         df = pd.DataFrame(utterance_info)
 
         os.makedirs("saved_outputs", exist_ok=True)
@@ -725,6 +694,8 @@ if __name__ == '__main__':
         elif args.Dataset=='KMIND':
             print('save_KMIND')
             df.to_csv("saved_outputs/utterances_KMIND.csv", index=False)
+        elif args.Dataset=='M3ED':
+            df.to_csv("saved_outputs/utterances_M3ED.csv", index=False)
                 
     
 
@@ -751,16 +722,13 @@ if __name__ == '__main__':
         if best_fscore == None or best_fscore < test_fscore:
             best_fscore = test_fscore
             best_label, best_pred = test_label, test_pred
-            if args.Dataset == 'IEMOCAP' and test_fscore >= 74.1:
-                torch.save(model.state_dict(), "./best_model_IEMOCAP.pth")
-                print('test_fscore:', test_fscore)
-            elif args.Dataset =='MELD' and test_fscore >= 67.4:
-                torch.save(model.state_dict(), "./best_model_MELD.pth")
-                print('test_fscore:', test_fscore)
-            elif args.Dataset == 'MOSEI' and test_fscore >= 43.3:
-                torch.save(model.state_dict(), "./best_model_MOSEI.pth")
-            elif args.Dataset =='KMIND' and test_fscore >= 74:
-                torch.save(model.state_dict(), "./best_model_KMIND.pth") 
+            # Always persist the actual best observed checkpoint. The upstream
+            # score thresholds could leave no checkpoint, and M3ED/IEMOCAP_4
+            # were not saved at all. Selection still follows the original
+            # test-selected protocol; see REPRODUCE.md.
+            checkpoint_path = "./best_model_{}.pth".format(args.Dataset)
+            torch.save(model.state_dict(), checkpoint_path)
+            print('new best test_fscore:', test_fscore, 'saved:', checkpoint_path)
         print('epoch: {}, train_loss: {}, train_acc: {}, train_fscore: {}, test_loss: {}, test_acc: {}, test_fscore: {}, time: {} sec'.\
                 format(e+1, train_loss, train_acc, train_fscore, test_loss, test_acc, test_fscore, round(time.time()-start_time, 2)))
         if (e+1)%10 == 0:

@@ -23,6 +23,8 @@
 </p>
 
 
+**Reproduction checklist:** [REPRODUCE.md](REPRODUCE.md) covers exact feature filenames, data sources, environment alternatives, checkpoints, and the original test-selected evaluation caveat. Use `python scripts/check_data.py --dataset IEMOCAP` before training.
+
 ## ⚙️ Installation
 
 ```bash

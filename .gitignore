@@ -1,0 +1,22 @@
+# Downloaded multimodal features (may be licensed/restricted)
+IEMOCAP_features/
+MELD_features/
+KMIND_features/
+M3ED_features/
+CMU-MOSEI_features/
+
+# Training artifacts
+*.pth
+*.pt
+*.ckpt
+saved_features/
+saved_outputs/
+logs/
+runs/
+
+# Python / environment artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
